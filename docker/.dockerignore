@@ -1,0 +1,43 @@
+# Docker ignore file for React Native
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.env
+.nyc_output
+coverage
+.DS_Store
+*.log
+
+# React Native specific
+android/
+ios/
+.buckconfig
+.flowconfig
+.watchmanconfig
+
+# Build outputs
+build/
+dist/
+*.tgz
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# Docker files (don't copy into container)
+Dockerfile*
+docker-compose*
+.dockerignore

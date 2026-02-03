@@ -1,0 +1,35 @@
+# Development Dockerfile for React Native
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++ \
+    openjdk11-jre \
+    android-tools \
+    && addgroup -g 1001 -S reactnative \
+    && adduser -S reactnative -u 1001
+
+# Copy package files first for better caching
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies for development)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Change ownership
+RUN chown -R reactnative:reactnative /app
+USER reactnative
+
+# Expose ports
+EXPOSE 8081 3000
+
+# Start Metro bundler in development mode
+CMD ["npm", "start"]
