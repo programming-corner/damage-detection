@@ -1,0 +1,1 @@
+console.log("Damage Detection Backend is running...");
