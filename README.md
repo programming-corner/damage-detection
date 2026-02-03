@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🏪 Store Management System
 
 A comprehensive React Native application for grocery store incident reporting and facilities management.
