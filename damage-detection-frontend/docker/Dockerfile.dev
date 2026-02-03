@@ -1,5 +1,5 @@
 # Development Dockerfile for React Native
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -19,7 +19,7 @@ RUN apk add --no-cache \
 COPY package*.json ./
 
 # Install all dependencies (including dev dependencies for development)
-RUN npm ci
+RUN npm i --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -31,5 +31,5 @@ USER reactnative
 # Expose ports
 EXPOSE 8081 3000
 
-# Start Metro bundler in development mode
-CMD ["npm", "start"]
+# Start web development server (Vite) instead of Metro bundler
+CMD ["npm", "run", "web"]

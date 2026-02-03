@@ -1,6 +1,7 @@
 {
   "name": "damage-detection-app",
   "version": "1.0.0",
+  "type": "module",
   "description": "Mobile app for damage detection and reporting",
   "main": "index.js",
   "scripts": {

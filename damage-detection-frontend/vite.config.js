@@ -19,6 +19,10 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: true,
+    host: true, // This allows external connections (important for Docker)
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
   },
 });

@@ -106,14 +106,18 @@ start_frontend() {
     # Check if dependencies are installed
     if [ ! -d "node_modules" ]; then
         print_status "Installing frontend dependencies..."
-        npm install
+        npm install --legacy-peer-deps
     fi
     
     print_status "Starting React Native web development server..."
+    echo "Note: If port 3000 is busy, Vite will automatically use the next available port"
     npm run web &
     
+    # Give the server a moment to start and determine the port
+    sleep 3
+    
     print_success "Frontend development server started!"
-    echo "🌐 Web App: http://localhost:3000"
+    echo "🌐 Check the terminal output above for the exact URL (likely http://localhost:3000 or http://localhost:3001)"
     echo ""
     echo "Press Ctrl+C to stop the development server"
     
@@ -175,7 +179,7 @@ setup_project() {
     if [ -d "damage-detection-frontend" ]; then
         print_status "Installing frontend dependencies..."
         cd damage-detection-frontend
-        npm install
+        npm install --legacy-peer-deps
         cd ..
         print_success "Frontend setup completed"
     fi

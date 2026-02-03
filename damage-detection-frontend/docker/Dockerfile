@@ -1,5 +1,5 @@
-# Use Node.js LTS as base image
-FROM node:18-alpine
+# Use Node.js 20 LTS as base image (required for Vite 7+)
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -15,8 +15,8 @@ RUN apk add --no-cache \
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install dependencies with legacy peer deps for React Native compatibility
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -35,5 +35,5 @@ RUN addgroup -g 1001 -S reactnative && \
 RUN chown -R reactnative:reactnative /app
 USER reactnative
 
-# Start Metro bundler
-CMD ["npm", "start"]
+# Start development server (web by default, can be overridden)
+CMD ["npm", "run", "web"]

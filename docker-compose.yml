@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # React Native Frontend (Web + Mobile)
   frontend:
@@ -21,8 +19,8 @@ services:
     tty: true
     networks:
       - app-network
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend  # Commented out for frontend-only development
 
   # Backend API Service (Future)
   backend:
