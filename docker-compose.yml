@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # React Native Frontend (Web + Mobile)
+  frontend:
+    build:
+      context: ./damage-detection-frontend
+      dockerfile: docker/Dockerfile.dev
+    container_name: damage-detection-frontend
+    ports:
+      - "3000:3000"  # Web development server
+      - "8081:8081"  # React Native Metro bundler
+    volumes:
+      - ./damage-detection-frontend:/app
+      - /app/node_modules  # Prevent node_modules from being overwritten
+    environment:
+      - NODE_ENV=development
+      - REACT_NATIVE_PACKAGER_HOSTNAME=0.0.0.0
+      - BACKEND_API_URL=http://backend:3001
+    stdin_open: true
+    tty: true
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  # Backend API Service (Future)
+  backend:
+    build:
+      context: ./damage-detection-backend
+      dockerfile: Dockerfile
+    container_name: damage-detection-backend
+    ports:
+      - "3001:3001"  # API server port
+    volumes:
+      - ./damage-detection-backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://user:password@postgres:5432/damage_detection_db
+      - JWT_SECRET=your-dev-jwt-secret
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+      - redis
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: damage-detection-db
+    environment:
+      - POSTGRES_DB=damage_detection_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: damage-detection-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

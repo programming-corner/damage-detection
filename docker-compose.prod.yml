@@ -2,14 +2,14 @@
 version: '3.8'
 
 services:
-  # React Native Metro Bundler (for development builds)
+  # React Native Frontend (Production Build)
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./damage-detection-frontend
+      dockerfile: docker/Dockerfile
     container_name: damage-detection-frontend-prod
     ports:
-      - "8081:8081"
+      - "3000:3000"  # Web application
     environment:
       - NODE_ENV=production
     networks:
@@ -19,11 +19,11 @@ services:
   # Backend API service
   backend:
     build:
-      context: ../backend  # Adjust to your backend location
+      context: ./damage-detection-backend
       dockerfile: Dockerfile
     container_name: damage-detection-backend
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://damage_user:damage_pass@postgres:5432/damage_detection_db

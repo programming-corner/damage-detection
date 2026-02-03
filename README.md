@@ -14,7 +14,22 @@ damage-detection/
 
 ## 🚀 Quick Start
 
-### Frontend (React Native + Web)
+### Development Environment (Recommended)
+```bash
+# Clone and setup
+git clone https://github.com/alaahayba/damage-detection.git
+cd damage-detection
+
+# Setup project dependencies
+./dev.sh setup
+
+# Start full development environment
+./dev.sh start
+```
+
+### Individual Services
+
+#### Frontend Development
 ```bash
 cd damage-detection-frontend
 npm install
@@ -23,11 +38,23 @@ npm run android          # Run on Android
 npm run ios             # Run on iOS (macOS only)
 ```
 
-### Backend (Coming Soon)
+#### Full-Stack with Docker
 ```bash
-cd damage-detection-backend
-npm install
-npm run dev             # Start development server
+# Start all services (frontend, backend, database)
+docker-compose up
+
+# Production deployment
+docker-compose -f docker-compose.prod.yml up
+```
+
+#### Development Scripts
+```bash
+./dev.sh start          # Start all services
+./dev.sh frontend        # Start only frontend
+./dev.sh db             # Start only database
+./dev.sh stop           # Stop all services
+./dev.sh logs           # View service logs
+./dev.sh clean          # Clean up containers
 ```
 
 ## 🔧 Development
