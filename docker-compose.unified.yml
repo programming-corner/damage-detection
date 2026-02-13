@@ -63,11 +63,29 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=${BACKEND_PORT:-3001}
-      - DATABASE_URL=${DATABASE_URL:-postgresql://damage_user:damage_pass@postgres:5432/damage_detection_db}
+      
+      # Database Configuration for TypeORM
+      - DB_HOST=${DB_HOST:-postgres}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USERNAME=${DB_USERNAME:-dev_user}
+      - DB_PASSWORD=${DB_PASSWORD:-dev_password_123}
+      - DB_DATABASE=${DB_DATABASE:-damage_detection_dev_db}
+      - DB_SYNC=${DB_SYNC:-false}
+      - DB_LOGGING=${DB_LOGGING:-true}
+      
+      # Explicitly disable DATABASE_URL to avoid auto-detection
+      - DATABASE_URL=
+      
+      # Application Configuration
       - JWT_SECRET=${JWT_SECRET:-your-dev-jwt-secret}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - UPLOAD_DIR=${UPLOAD_DIR:-./uploads}
-      - GOOGLE_CLOUD_STORAGE_BUCKET=${GCS_BUCKET}
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10485760}
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      
+      # External Services
+      - GCS_BUCKET=${GCS_BUCKET}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     networks:
       - app-network
     depends_on:
@@ -86,10 +104,10 @@ services:
     container_name: damage-detection-postgres
     profiles: ["dev", "prod", "development", "production", "test"]
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-damage_detection_db}
-      - POSTGRES_USER=${POSTGRES_USER:-damage_user}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-damage_pass}
-      - POSTGRES_HOST_AUTH_METHOD=${POSTGRES_AUTH_METHOD:-scram-sha-256}
+      - POSTGRES_DB=${POSTGRES_DB:-damage_detection_dev_db}
+      - POSTGRES_USER=${POSTGRES_USER:-dev_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dev_password_123}
+      - POSTGRES_HOST_AUTH_METHOD=${POSTGRES_AUTH_METHOD:-trust}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
@@ -101,7 +119,7 @@ services:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-damage_user} -d ${POSTGRES_DB:-damage_detection_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dev_user} -d ${POSTGRES_DB:-damage_detection_dev_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -111,7 +129,7 @@ services:
     image: redis:${REDIS_VERSION:-7-alpine}
     container_name: damage-detection-redis
     profiles: ["dev", "prod", "development", "production", "test"]
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    command: redis-server --appendonly yes
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
