@@ -6,9 +6,9 @@ import { join } from 'node:path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
+
   const configService = app.get(ConfigService);
-  const port = configService.get('PORT') || 3001;
+  const port = configService.get<number>('PORT') || 3001;
 
   // Serve uploaded files statically
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -23,6 +23,13 @@ async function bootstrap() {
   });
 
   await app.listen(port);
-  console.log(`🚀 Server running on port ${port}`);
+  console.log(`🚀 Server running on port ${String(port)}`);
 }
-bootstrap();
+bootstrap()
+  .then(() => {
+    console.log('Application started successfully');
+  })
+  .catch((err) => {
+    console.error('Error starting the application:', err);
+    process.exit(1);
+  });

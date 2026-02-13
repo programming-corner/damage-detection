@@ -21,7 +21,7 @@ import { ReportStatus } from '../entities/damage-report.entity';
 
 @Controller('api/reports')
 export class ReportsController {
-  constructor(private reportsService: ReportsService) {}
+  constructor(private readonly reportsService: ReportsService) {}
 
   @Post('damage')
   @UseGuards(JwtAuthGuard)
@@ -50,11 +50,8 @@ export class ReportsController {
   async reportDamage(
     @Body() createReportDto: { item_sku: string },
     @UploadedFiles() files: Express.Multer.File[],
-    @Request() req: any,
+    @Request() { user }: { user: { id: string; email: string; name: string } },
   ) {
-    // Extract user info from JWT token
-    const user = req.user;
-    
     const reportData: CreateReportDto = {
       item_sku: createReportDto.item_sku,
       created_by_id: user.id,

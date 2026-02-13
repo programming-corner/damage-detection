@@ -12,7 +12,7 @@ export interface JwtPayload {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -20,17 +20,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
+  validate(payload: JwtPayload) {
     // Basic payload validation - cloud service will handle user verification
     if (!payload.sub || !payload.email) {
       throw new UnauthorizedException('Invalid token payload');
     }
-    
-    return { 
-      id: payload.sub, 
-      email: payload.email, 
+
+    return {
+      id: payload.sub,
+      email: payload.email,
       role: payload.role,
-      name: payload.name 
+      name: payload.name,
     };
   }
 }

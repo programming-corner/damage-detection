@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DamageReport, ReportStatus } from '../entities/damage-report.entity';
 import { DamageImage } from '../entities/damage-image.entity';
-import { UploadService, ImageMetadata } from './upload.service';
+import { UploadService } from './upload.service';
+import { ImageMetadata } from '../types/image-metadata.types';
 
 export interface CreateReportDto {
   item_sku: string;
@@ -24,10 +25,10 @@ export interface UploadedFile {
 export class ReportsService {
   constructor(
     @InjectRepository(DamageReport)
-    private reportsRepository: Repository<DamageReport>,
+    private readonly reportsRepository: Repository<DamageReport>,
     @InjectRepository(DamageImage)
-    private imagesRepository: Repository<DamageImage>,
-    private uploadService: UploadService,
+    private readonly imagesRepository: Repository<DamageImage>,
+    private readonly uploadService: UploadService,
   ) {}
 
   async createReport(reportData: CreateReportDto): Promise<DamageReport> {
@@ -35,7 +36,7 @@ export class ReportsService {
       ...reportData,
       status: ReportStatus.PENDING,
     });
-    
+
     return this.reportsRepository.save(report);
   }
 
@@ -44,9 +45,8 @@ export class ReportsService {
     file: UploadedFile,
   ): Promise<DamageImage> {
     // Extract metadata from the uploaded image
-    const metadata: ImageMetadata = await this.uploadService.extractImageMetadata(
-      file.path,
-    );
+    const metadata: ImageMetadata =
+      await this.uploadService.extractImageMetadata(file.path);
 
     // Create image record
     const image = this.imagesRepository.create({

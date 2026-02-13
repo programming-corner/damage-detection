@@ -4,25 +4,25 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { promisify } from 'node:util';
 import * as exifr from 'exifr';
+import {
+  ExifData,
+  GpsData,
+  ImageMetadata,
+} from '../types/image-metadata.types';
 
 const ensureDir = promisify(fs.mkdir);
 
-export interface ImageMetadata {
-  exif?: any;
-  gps?: {
-    latitude?: number;
-    longitude?: number;
-  };
-  timestamp?: Date;
-}
-
 @Injectable()
 export class UploadService {
-  private uploadDir: string;
+  private readonly uploadDir: string;
 
-  constructor(private configService: ConfigService) {
-    this.uploadDir = this.configService.get<string>('UPLOAD_DIR') || './uploads';
-    this.ensureUploadDir();
+  constructor(private readonly configService: ConfigService) {
+    this.uploadDir =
+      this.configService.get<string>('UPLOAD_DIR') || './uploads';
+  }
+
+  async onModuleInit() {
+    await this.ensureUploadDir();
   }
 
   private async ensureUploadDir(): Promise<void> {
@@ -35,12 +35,14 @@ export class UploadService {
 
   async extractImageMetadata(filePath: string): Promise<ImageMetadata> {
     try {
-      const exifData = await exifr.parse(filePath);
-      const gps = await exifr.gps(filePath);
-      
+      const exifData = (await exifr.parse(filePath)) as ExifData | undefined;
+      const gps = (await exifr.gps(filePath)) as GpsData | undefined;
+
       return {
         exif: exifData,
-        gps: gps ? { latitude: gps.latitude, longitude: gps.longitude } : undefined,
+        gps: gps
+          ? { latitude: gps.latitude, longitude: gps.longitude }
+          : undefined,
         timestamp: exifData?.DateTime ? new Date(exifData.DateTime) : undefined,
       };
     } catch (error) {

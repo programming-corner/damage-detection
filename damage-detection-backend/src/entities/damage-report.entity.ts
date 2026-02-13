@@ -25,6 +25,9 @@ export class DamageReport {
   item_sku: string;
 
   @Column()
+  item_Id: string;
+
+  @Column()
   created_by_id: string; // User ID from cloud service
 
   @Column()
