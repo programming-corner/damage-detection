@@ -14,20 +14,27 @@ damage-detection/
 
 ## 🚀 Quick Start
 
-### Development Environment (Recommended)
+### Using Unified Docker Compose (Recommended)
+
 ```bash
-# Clone and setup
+# Clone the repository
 git clone https://github.com/alaahayba/damage-detection.git
 cd damage-detection
 
-# Setup project dependencies
-./dev.sh setup
+# Setup environment files
+cp env.examples/.env.development.example .env.development
+cp env.examples/.env.production.example .env.production
 
-# Start full development environment
-./dev.sh start
+# Start development environment
+./docker-manage.sh dev up
+
+# Or start production environment
+./docker-manage.sh prod up -d
 ```
 
-### Individual Services
+📖 **See [DOCKER-GUIDE.md](./DOCKER-GUIDE.md) for comprehensive Docker setup documentation**
+
+### Individual Services (Alternative)
 
 #### Frontend Development
 ```bash
